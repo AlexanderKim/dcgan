@@ -79,7 +79,7 @@ def train_gan(data_path, save_gen_path, save_disc_path):
 
     n_epochs = 5
 
-    gen, disc = _train_loop(data_loader=data_loaderne,
+    gen, disc = _train_loop(data_loader=data_loader,
                             gen=gen, disc=disc,
                             criterion=criterion,
                             gen_opt=gen_opt,
