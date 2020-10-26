@@ -6,7 +6,6 @@ from torch.utils.data import DataLoader
 
 
 def load_dataset(path, batch_size):
-    path = os.path.join(os.getcwd(), "data")
     dataset_transforms = transforms.Compose([
         transforms.Resize(64),
         transforms.CenterCrop(64),

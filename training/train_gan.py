@@ -63,7 +63,7 @@ def _train_loop(
         return gen, disc
 
 def train_gan(data_path, save_gen_path, save_disc_path):
-    data_loader = load_dataset(data_path)
+    data_loader = load_dataset(data_path, 128)
 
     gen = Generator().to('cuda')
     disc = Discriminator().to('cuda')
@@ -78,7 +78,7 @@ def train_gan(data_path, save_gen_path, save_disc_path):
 
     n_epochs = 5
 
-    gen, disc = _train_loop(data_loader=None,
+    gen, disc = _train_loop(data_loader=data_loaderne,
                             gen=gen, disc=disc,
                             criterion=criterion,
                             gen_opt=gen_opt,
@@ -89,4 +89,4 @@ def train_gan(data_path, save_gen_path, save_disc_path):
     torch.save(disc.state_dict(), save_disc_path)
 
 if __name__ == "__main__":
-    train_gan(os.pardir() / "data", "gen", "disc")
+    train_gan("../data", "gen", "disc")
