@@ -1,7 +1,7 @@
 import torch
 
 
-class Generator_model(object):
+class GeneratorModel(object):
     def __init__(self, gen_weights):
         from networks.Generator import Generator
         self.gen = Generator()
