@@ -62,8 +62,9 @@ def _train_loop(
 
         return gen, disc
 
+
 def train_gan(data_path, save_gen_path, save_disc_path):
-    data_loader = load_dataset(data_path, 128)
+    data_loader = load_dataset(path=data_path, batch_size=128)
 
     gen = Generator().to('cuda')
     disc = Discriminator().to('cuda')
