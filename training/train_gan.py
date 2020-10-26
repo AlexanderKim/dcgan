@@ -1,6 +1,7 @@
 import os
 
 import torch
+import torch.nn as nn
 from torch.nn import BCELoss
 
 from tqdm.auto import tqdm
