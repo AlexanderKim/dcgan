@@ -1,4 +1,5 @@
 import os
+from collections.abc import Callable
 
 import torch
 import torch.nn as nn
@@ -18,14 +19,10 @@ def weights_init(m):
         torch.nn.init.normal_(m.weight, 0.0, 0.02)
         torch.nn.init.constant_(m.bias, 0)
 
-def _train_loop(
-        data_loader: torch.utils.data.DataLoader,
-        gen: Generator,
-        disc: Discriminator,
-        criterion: BCELoss,
-        gen_opt: torch.optim.Optimizer,
-        disc_opt: torch.optim.Optimizer,
-        n_epochs=5):
+
+def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: Discriminator,
+                criterion: BCELoss, gen_opt: torch.optim.Optimizer, disc_opt: torch.optim.Optimizer, n_epochs=5,
+                feedback_fn: Callable[[torch.Tensor, torch.Tensor, float, float], None] = None):
 
     for epoch in range(n_epochs):
         cur_step = 0
@@ -38,7 +35,7 @@ def _train_loop(
             disc_real_loss = criterion(disc_real_pred, torch.ones_like(disc_real_pred))
 
             fake = gen(gen.gen_noize())
-    #         fake = gen(torch.randn(real.size(0), nz, 1, 1, device=device))
+            #         fake = gen(torch.randn(real.size(0), nz, 1, 1, device=device))
 
             disc_fake_pred = disc(fake.detach())
             disc_fake_loss = criterion(disc_fake_pred, torch.zeros_like(disc_fake_pred))
@@ -50,7 +47,7 @@ def _train_loop(
             gen_opt.zero_grad()
 
             gen_fake_pred = disc(gen(gen.gen_noize()))
-    #         gen_fake_pred = disc(gen(torch.randn(real.size(0), nz, 1, 1, device=device)))
+            #         gen_fake_pred = disc(gen(torch.randn(real.size(0), nz, 1, 1, device=device)))
 
             gen_fake_loss = criterion(gen_fake_pred, torch.ones_like(gen_fake_pred))
 
@@ -58,13 +55,13 @@ def _train_loop(
             gen_opt.step()
 
             cur_step += 1
-            if cur_step % 500 == 0:
-                pass
+            if cur_step % 500 == 0 and feedback_fn:
+                feedback_fn(fake, real, gen_fake_loss, disc_loss) # TODO: async fire and forget?
 
         return gen, disc
 
 
-def train_gan(data_path, save_gen_path, save_disc_path):
+def train_gan(data_path, save_gen_path, save_disc_path, feedback_fn=None):
     data_loader = load_dataset(path=data_path, batch_size=128)
 
     gen = Generator().to('cuda')
@@ -85,10 +82,12 @@ def train_gan(data_path, save_gen_path, save_disc_path):
                             criterion=criterion,
                             gen_opt=gen_opt,
                             disc_opt=disc_opt,
-                            n_epochs=5)
+                            n_epochs=5,
+                            feedback_fn=feedback_fn)
 
     torch.save(gen.state_dict(), save_gen_path)
     torch.save(disc.state_dict(), save_disc_path)
+
 
 if __name__ == "__main__":
     train_gan("../data", "gen", "disc")
