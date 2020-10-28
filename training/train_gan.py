@@ -1,5 +1,5 @@
 import os
-from collections.abc import Callable
+from typing import Callable
 
 import torch
 import torch.nn as nn
