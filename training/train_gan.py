@@ -61,7 +61,7 @@ def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: 
 
             cur_step += 1
             if cur_step % 500 == 0 and feedback_fn:
-                feedback_fn(fake, real, gen_fake_loss, disc_loss) # TODO: async fire and forget?
+                feedback_fn(fake, real, gen_losses, disc_losses) # TODO: async fire and forget?
 
     return gen, disc
 
