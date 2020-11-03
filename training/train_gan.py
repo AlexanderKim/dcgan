@@ -21,7 +21,7 @@ def weights_init(m):
 
 
 def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: Discriminator,
-                criterion: BCELoss, gen_opt: torch.optim.Optimizer, disc_opt: torch.optim.Optimizer, n_epochs=5,
+                criterion: BCEWithLogitsLoss, gen_opt: torch.optim.Optimizer, disc_opt: torch.optim.Optimizer, n_epochs=5,
                 feedback_fn: Callable[[torch.Tensor, torch.Tensor, float, float], None] = None):
 
     for epoch in range(n_epochs):
