@@ -3,7 +3,7 @@ from typing import Callable
 
 import torch
 import torch.nn as nn
-from torch.nn import BCELoss
+from torch.nn import BCEWithLogitsLoss
 
 from tqdm.auto import tqdm
 
@@ -58,7 +58,7 @@ def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: 
             if cur_step % 500 == 0 and feedback_fn:
                 feedback_fn(fake, real, gen_fake_loss, disc_loss) # TODO: async fire and forget?
 
-        return gen, disc
+    return gen, disc
 
 
 def train_gan(data_path, save_gen_path, save_disc_path, feedback_fn=None):
@@ -67,7 +67,7 @@ def train_gan(data_path, save_gen_path, save_disc_path, feedback_fn=None):
     gen = Generator().to('cuda')
     disc = Discriminator().to('cuda')
 
-    criterion = torch.nn.BCELoss()
+    criterion = torch.nn.BCEWithLogitsLoss()
     lr = 3e-4
     gen_opt = torch.optim.Adam(gen.parameters(), lr=lr, betas=(0.5, 0.999))
 
