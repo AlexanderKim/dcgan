@@ -24,6 +24,8 @@ def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: 
                 criterion: BCEWithLogitsLoss, gen_opt: torch.optim.Optimizer, disc_opt: torch.optim.Optimizer, n_epochs=5,
                 feedback_fn: Callable[[torch.Tensor, torch.Tensor, float, float], None] = None):
 
+    gen_losses = []
+    disc_losses = []
     for epoch in range(n_epochs):
         cur_step = 0
 
@@ -53,6 +55,9 @@ def _train_loop(data_loader: torch.utils.data.DataLoader, gen: Generator, disc: 
 
             gen_fake_loss.backward()
             gen_opt.step()
+
+            gen_losses += [gen_fake_loss]
+            disc_losses += [disc_loss]
 
             cur_step += 1
             if cur_step % 500 == 0 and feedback_fn:
